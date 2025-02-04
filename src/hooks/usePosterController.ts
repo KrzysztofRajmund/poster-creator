@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -7,11 +7,23 @@ import { usePosterContext } from "@/context";
 
 export default function usePosterController() {
   const stackingOrderRef = useRef<number>(0);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [
     { imageElements },
     { setBackgroundImage, setImageElements, setTextElements },
   ] = usePosterContext();
+
+  const clearPoster = useCallback(() => setIsDialogOpen(true), []);
+  const handleCloseDialog = () => setIsDialogOpen(false);
+
+  const handleConfirmDialog = useCallback(() => {
+    setBackgroundImage("");
+    setImageElements([]);
+    setTextElements([]);
+
+    setIsDialogOpen(false);
+  }, [setBackgroundImage, setImageElements, setTextElements]);
 
   const addImageElement = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +59,13 @@ export default function usePosterController() {
     [imageElements, setImageElements],
   );
 
+  const addTextElement = useCallback(() => {
+    setTextElements((prevTextElements) => [
+      ...prevTextElements,
+      { id: uuidv4(), zIndex: stackingOrderRef.current++ },
+    ]);
+  }, [setTextElements]);
+
   const handleBackgroundChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
@@ -61,12 +80,13 @@ export default function usePosterController() {
     [setBackgroundImage],
   );
 
-  const addTextElement = useCallback(() => {
-    setTextElements((prevTextElements) => [
-      ...prevTextElements,
-      { id: uuidv4(), zIndex: stackingOrderRef.current++ },
-    ]);
-  }, [setTextElements]);
-
-  return { addImageElement, addTextElement, handleBackgroundChange };
+  return {
+    isDialogOpen,
+    addImageElement,
+    addTextElement,
+    clearPoster,
+    handleBackgroundChange,
+    handleCloseDialog,
+    handleConfirmDialog,
+  };
 }
