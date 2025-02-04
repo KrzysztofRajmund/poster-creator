@@ -1,9 +1,25 @@
-export const getBoundaryChecksForPosition = (
-  newX: number,
-  newY: number,
-  parentRect: DOMRect,
-  dragIconRect: DOMRect,
-): { adjustedX: number; adjustedY: number } => {
+import { Position } from "@/hooks/useDraggableResizable";
+
+type ChecksForPositionParams = {
+  newX: number;
+  newY: number;
+  parentRect: DOMRect;
+  dragIconRect: DOMRect;
+};
+
+type ChecksForSizeParams = {
+  newWidth: number;
+  newHeight: number;
+  position: Position;
+  parentRect: DOMRect;
+};
+
+export const getBoundaryChecksForPosition = ({
+  newX,
+  newY,
+  parentRect,
+  dragIconRect,
+}: ChecksForPositionParams): { adjustedX: number; adjustedY: number } => {
   const dragIconOffsetX = dragIconRect.width / 2;
   const dragIconOffsetY = dragIconRect.height / 2;
 
@@ -23,12 +39,12 @@ export const getBoundaryChecksForPosition = (
   };
 };
 
-export const getBoundaryChecksForSize = (
-  newWidth: number,
-  newHeight: number,
-  position: { x: number; y: number },
-  parentRect: DOMRect,
-): { adjustedWidth: number; adjustedHeight: number } => {
+export const getBoundaryChecksForSize = ({
+  newWidth,
+  newHeight,
+  position,
+  parentRect,
+}: ChecksForSizeParams): { adjustedWidth: number; adjustedHeight: number } => {
   // Boundary checks for parent element
   if (newWidth + position.x > parentRect.width)
     newWidth = parentRect.width - position.x;
