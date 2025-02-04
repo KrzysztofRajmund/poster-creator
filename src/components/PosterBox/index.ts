@@ -1,0 +1,1 @@
+export { PosterBox } from "./PosterBox";

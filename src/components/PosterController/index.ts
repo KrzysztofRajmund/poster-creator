@@ -1,0 +1,1 @@
+export { PosterController } from "./PosterController";
