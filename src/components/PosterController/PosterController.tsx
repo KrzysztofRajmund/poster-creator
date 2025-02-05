@@ -1,13 +1,19 @@
 "use client";
-import usePosterController from "@/hooks/usePosterController";
+import dynamic from "next/dynamic";
 
 import EditorIcon from "@/assets/icons/editor.svg";
 import ResetIcon from "@/assets/icons/reset.svg";
 import WarningIcon from "@/assets/icons/warning.svg";
+import usePosterController from "@/hooks/usePosterController";
+import { exportToPng } from "@/utils/exportToPng";
 
 import { Button } from "../atoms";
-import { Dialog } from "../Dialog";
 import { PosterActions } from "../PosterActions";
+
+// Nextjs Dialog suspense and lazy loading handler
+const Dialog = dynamic(() => import("../Dialog").then((mod) => mod.Dialog), {
+  ssr: false,
+});
 
 export const PosterController = () => {
   const {
@@ -46,19 +52,20 @@ export const PosterController = () => {
             handleBackgroundChange={handleBackgroundChange}
           />
         </div>
-        {/* TODO: Implement Export to PNG */}
-        <Button className="ml-auto flex" onClick={() => {}}>
+        <Button className="ml-auto flex" onClick={exportToPng}>
           Export to PNG
         </Button>
       </section>
-      <Dialog
-        description="You’re about to reset whole process. Are you sure you want to do it?"
-        title="Warning"
-        isOpen={isDialogOpen}
-        icon={<WarningIcon width={218} height={199} />}
-        onClose={handleCloseDialog}
-        onConfirm={handleConfirmDialog}
-      />
+      {isDialogOpen && (
+        <Dialog
+          description="You’re about to reset the whole process. Are you sure?"
+          isOpen={isDialogOpen}
+          icon={<WarningIcon width={218} height={199} />}
+          title="Warning"
+          onClose={handleCloseDialog}
+          onConfirm={handleConfirmDialog}
+        />
+      )}
     </>
   );
 };

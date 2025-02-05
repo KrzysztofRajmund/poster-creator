@@ -5,7 +5,7 @@ const HEIGHT_THRESHOLD = 2;
 
 export default function useDynamicFontSize(
   containerRef: React.RefObject<HTMLDivElement>,
-  textRef: React.RefObject<HTMLSpanElement>,
+  textRef: React.RefObject<HTMLTextAreaElement>,
 ) {
   useEffect(() => {
     const refContainerElement = containerRef.current;
