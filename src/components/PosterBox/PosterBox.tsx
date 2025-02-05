@@ -1,6 +1,7 @@
 "use client";
 
 import usePosterBox from "@/hooks/usePosterBox";
+import { calculateInitialSize } from "@/utils/calculateInitialSize";
 
 import { DraggableResizableItem } from "../DraggableResizeableItem";
 
@@ -32,6 +33,7 @@ export const PosterBox = () => {
         <DraggableResizableItem
           key={image.id}
           image={image}
+          initialSize={calculateInitialSize(image.width, image.height)}
           layerIndex={image.zIndex}
           onRemove={() => removeImageElement(image.id)}
         />

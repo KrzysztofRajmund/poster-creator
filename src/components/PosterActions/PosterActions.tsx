@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useCallback, useRef } from "react";
 
 import { ActionCard } from "../ActionCard";
 
@@ -18,6 +18,17 @@ export const PosterActions = ({
   addTextElement,
   handleBackgroundChange,
 }: PosterActionsProps) => {
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const backgroundInputRef = useRef<HTMLInputElement>(null);
+
+  const triggerImageUpload = useCallback(() => {
+    imageInputRef.current?.click();
+  }, []);
+
+  const triggerBackgroundUpload = useCallback(() => {
+    backgroundInputRef.current?.click();
+  }, []);
+
   return (
     <div className="mb-auto grid grid-cols-2 justify-center gap-x-[29px] gap-y-8">
       <h4 className="col-span-full rounded-[10px] bg-white-97 px-4 py-6 text-md font-bold">
@@ -31,11 +42,11 @@ export const PosterActions = ({
       <ActionCard
         icon={<ImagePlaceholderIcon width={96} height={88} />}
         text="Add image"
-        onClick={() => document.getElementById("imageInput")?.click()}
+        onClick={triggerImageUpload}
       />
       <input
+        ref={imageInputRef}
         className="hidden"
-        id="imageInput"
         type="file"
         accept="image/*"
         onChange={addImageElement}
@@ -43,11 +54,11 @@ export const PosterActions = ({
       <ActionCard
         icon={<BackgroundIcon width={96} height={96} />}
         text="Add background image"
-        onClick={() => document.getElementById("backgroundInput")?.click()}
+        onClick={triggerBackgroundUpload}
       />
       <input
+        ref={backgroundInputRef}
         className="hidden"
-        id="backgroundInput"
         type="file"
         accept="image/*"
         onChange={handleBackgroundChange}

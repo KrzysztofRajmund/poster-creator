@@ -1,5 +1,6 @@
-import { useState, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+import { MIN_HEIGHT, MIN_WIDTH } from "@/constants";
 import {
   getBoundaryChecksForPosition,
   getBoundaryChecksForSize,
@@ -26,9 +27,26 @@ export default function useDraggableResizable({
   initSize,
   isImage = false,
 }: HookProps) {
+  const elementRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<Position>(initPosition);
   const [size, setSize] = useState<Size>(initSize);
-  const elementRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      if (
+        elementRef.current &&
+        !elementRef.current.contains(event.target as Node)
+      ) {
+        setIsVisible(false);
+      }
+    },
+    [elementRef],
+  );
+
+  const handlePropagation = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  };
 
   const handleDrag = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -40,22 +58,18 @@ export default function useDraggableResizable({
         if (elementRef.current && elementRef.current.parentElement) {
           const parentRect =
             elementRef.current.parentElement.getBoundingClientRect();
-          const dragIconRect =
-            elementRef.current.firstElementChild?.getBoundingClientRect();
 
           const newX = event.clientX - startX;
           const newY = event.clientY - startY;
 
-          if (dragIconRect) {
-            const { adjustedX, adjustedY } = getBoundaryChecksForPosition({
-              newX,
-              newY,
-              parentRect,
-              dragIconRect,
-            });
+          const { adjustedX, adjustedY } = getBoundaryChecksForPosition({
+            newX,
+            newY,
+            parentRect,
+            elementRect: elementRef.current.getBoundingClientRect(),
+          });
 
-            setPosition({ x: adjustedX, y: adjustedY });
-          }
+          setPosition({ x: adjustedX, y: adjustedY });
         }
       };
 
@@ -67,7 +81,18 @@ export default function useDraggableResizable({
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
     },
-    [position],
+    [position.x, position.y],
+  );
+
+  const handleDragStart = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (isVisible) {
+        setIsVisible(false);
+      }
+      handlePropagation(e);
+      handleDrag(e);
+    },
+    [handleDrag, isVisible],
   );
 
   const handleImageResize = useCallback(
@@ -77,6 +102,7 @@ export default function useDraggableResizable({
       const startY = e.clientY;
       const startWidth = size.width;
       const startHeight = size.height;
+      const aspectRatio = size.width / size.height;
 
       const handleMouseMove = (event: MouseEvent) => {
         if (elementRef.current && elementRef.current.parentElement) {
@@ -85,10 +111,17 @@ export default function useDraggableResizable({
 
           const deltaX = event.clientX - startX;
           const deltaY = event.clientY - startY;
-          const delta = Math.max(deltaX, deltaY);
 
-          const newWidth = startWidth + delta;
-          const newHeight = startHeight + delta;
+          // Calculate new size with maintained aspect ratio
+          let newWidth = startWidth + deltaX;
+          let newHeight = startHeight + deltaY;
+
+          // Adjust the width or height based on the aspect ratio
+          if (newWidth / newHeight > aspectRatio) {
+            newWidth = newHeight * aspectRatio;
+          } else {
+            newHeight = newWidth / aspectRatio;
+          }
 
           const { adjustedWidth, adjustedHeight } = getBoundaryChecksForSize({
             newWidth,
@@ -96,6 +129,15 @@ export default function useDraggableResizable({
             position,
             parentRect,
           });
+
+          // Prevent resizing if the aspect ratio changes or the size is too small
+          if (
+            aspectRatio !== adjustedWidth / adjustedHeight ||
+            adjustedWidth < MIN_WIDTH ||
+            adjustedHeight < MIN_HEIGHT
+          ) {
+            return;
+          }
 
           setSize({ width: adjustedWidth, height: adjustedHeight });
         }
@@ -125,6 +167,7 @@ export default function useDraggableResizable({
           const parentRect =
             elementRef.current.parentElement.getBoundingClientRect();
 
+          // Calculate new width and height based on mouse movement
           const newWidth = startWidth + (event.clientX - startX);
           const newHeight = startHeight + (event.clientY - startY);
 
@@ -134,6 +177,14 @@ export default function useDraggableResizable({
             position,
             parentRect,
           });
+
+          // Prevent resizing if  the size is too small
+          if (
+            adjustedWidth < MIN_WIDTH * 2 ||
+            adjustedHeight < MIN_HEIGHT * 2
+          ) {
+            return;
+          }
 
           setSize({ width: adjustedWidth, height: adjustedHeight });
         }
@@ -161,11 +212,21 @@ export default function useDraggableResizable({
     [isImage, handleImageResize, handleTextResize],
   );
 
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handleClickOutside]);
+
   return {
-    position,
-    size,
     elementRef,
-    handleDrag,
+    position,
+    isVisible,
+    size,
+    handleDragStart,
+    handlePropagation,
     handleResize,
+    setIsVisible,
   };
 }

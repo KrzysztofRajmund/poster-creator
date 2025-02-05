@@ -56,7 +56,7 @@ export const PosterController = () => {
           Export to PNG
         </Button>
       </section>
-      {isDialogOpen && (
+      {isDialogOpen ? (
         <Dialog
           description="You’re about to reset the whole process. Are you sure?"
           isOpen={isDialogOpen}
@@ -65,7 +65,7 @@ export const PosterController = () => {
           onClose={handleCloseDialog}
           onConfirm={handleConfirmDialog}
         />
-      )}
+      ) : null}
     </>
   );
 };

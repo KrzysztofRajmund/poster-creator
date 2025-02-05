@@ -4,7 +4,7 @@ type ChecksForPositionParams = {
   newX: number;
   newY: number;
   parentRect: DOMRect;
-  dragIconRect: DOMRect;
+  elementRect: DOMRect;
 };
 
 type ChecksForSizeParams = {
@@ -18,20 +18,16 @@ export const getBoundaryChecksForPosition = ({
   newX,
   newY,
   parentRect,
-  dragIconRect,
+  elementRect,
 }: ChecksForPositionParams): { adjustedX: number; adjustedY: number } => {
-  const dragIconOffsetX = dragIconRect.width / 2;
-  const dragIconOffsetY = dragIconRect.height / 2;
-
-  // Adjust boundaries according to the drag icon size
-  if (newX < -dragIconOffsetX) newX = -dragIconOffsetX;
-  if (newY < -dragIconOffsetY) newY = -dragIconOffsetY;
+  if (newX < 0) newX = 0;
+  if (newY < 0) newY = 0;
 
   // Boundary checks for parent element
-  if (newX + dragIconOffsetX > parentRect.width)
-    newX = parentRect.width - dragIconOffsetX;
-  if (newY + dragIconOffsetY > parentRect.height)
-    newY = parentRect.height - dragIconOffsetY;
+  if (newX + elementRect.width > parentRect.width)
+    newX = parentRect.width - elementRect.width;
+  if (newY + elementRect.height > parentRect.height)
+    newY = parentRect.height - elementRect.height;
 
   return {
     adjustedX: newX,
