@@ -19,7 +19,7 @@ export const PosterActions = ({
   handleBackgroundChange,
 }: PosterActionsProps) => {
   return (
-    <div className="mb-auto grid grid-cols-1 justify-center gap-x-[29px] gap-y-8 2xl:grid-cols-2 2xl:justify-start">
+    <div className="mb-auto grid grid-cols-2 justify-center gap-x-[29px] gap-y-8">
       <h4 className="col-span-full rounded-[10px] bg-white-97 px-4 py-6 text-md font-bold">
         Add content
       </h4>
