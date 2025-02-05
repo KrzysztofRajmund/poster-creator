@@ -16,6 +16,17 @@ export type Size = {
   height: number;
 };
 
+type Return = {
+  elementRef: React.RefObject<HTMLDivElement | null>;
+  position: Position;
+  isVisible: boolean;
+  size: Size;
+  handleDragStart: (e: React.MouseEvent<HTMLDivElement>) => void;
+  handlePropagation: (e: React.MouseEvent<HTMLDivElement>) => void;
+  handleResize: (e: React.MouseEvent<HTMLDivElement>) => void;
+  makeItemActionsVisible: () => void;
+};
+
 interface HookProps {
   initPosition: Position;
   initSize: Size;
@@ -26,7 +37,7 @@ export default function useDraggableResizable({
   initPosition,
   initSize,
   isImage = false,
-}: HookProps) {
+}: HookProps): Return {
   const elementRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<Position>(initPosition);
   const [size, setSize] = useState<Size>(initSize);
@@ -231,6 +242,5 @@ export default function useDraggableResizable({
     handlePropagation,
     handleResize,
     makeItemActionsVisible,
-    setIsVisible,
   };
 }
