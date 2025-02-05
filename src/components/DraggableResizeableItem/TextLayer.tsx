@@ -3,9 +3,32 @@ import { forwardRef, useRef } from "react";
 import { cn } from "@/utils/twClassesMerge";
 import clsx from "clsx";
 
-import { BADGE_COLORS, COLOR_MAP } from "@/constants";
 import useChangeTextAndColor from "@/hooks/useChangeTextAndColor";
 import useDynamicFontSize from "@/hooks/useDynamicFontSize";
+
+export const BADGE_COLORS = [
+  "black-100",
+  "white-base",
+  "red-90",
+  "blue",
+  "green",
+];
+export const COLOR_MAP: Record<string, Record<string, string>> = {
+  bg: {
+    "black-100": "bg-black-100",
+    "white-base": "bg-white-base",
+    "red-90": "bg-red-90",
+    blue: "bg-blue",
+    green: "bg-green",
+  },
+  text: {
+    "black-100": "text-black-100",
+    "white-base": "text-white-base",
+    "red-90": "text-red-90",
+    blue: "text-blue",
+    green: "text-green",
+  },
+};
 
 interface TextLayerProps {
   isVisible: boolean;

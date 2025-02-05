@@ -3,8 +3,17 @@ import { useCallback, useMemo } from "react";
 
 import { DEFAULT_BACKGROUND_IMAGE } from "@/constants";
 import { usePosterContext } from "@/context/PosterProvider.hooks";
+import { ImageElement, TextElement } from "@/types";
 
-export default function usePosterBox() {
+type Return = {
+  backgroundImageUrl: { backgroundImage: string };
+  imageElements: ImageElement[];
+  textElements: TextElement[];
+  removeTextElement: (key: string) => void;
+  removeImageElement: (key: string) => void;
+};
+
+export default function usePosterBox(): Return {
   const [
     { backgroundImage, imageElements, textElements },
     { setImageElements, setTextElements },

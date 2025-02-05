@@ -5,7 +5,17 @@ import { v4 as uuidv4 } from "uuid";
 
 import { usePosterContext } from "@/context";
 
-export default function usePosterController() {
+type Return = {
+  isDialogOpen: boolean;
+  addImageElement: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  addTextElement: () => void;
+  clearPoster: () => void;
+  handleBackgroundChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCloseDialog: () => void;
+  handleConfirmDialog: () => void;
+};
+
+export default function usePosterController(): Return {
   const stackingOrderRef = useRef<number>(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 

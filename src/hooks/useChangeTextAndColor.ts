@@ -1,6 +1,15 @@
 import { useState, useCallback } from "react";
 
-export default function useChangeTextAndColor(initialColor = "black-100") {
+type Return = {
+  text: string;
+  textColor: string;
+  handleTextChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  handleColorChange: (newColor: string) => void;
+};
+
+export default function useChangeTextAndColor(
+  initialColor = "black-100",
+): Return {
   const [text, setText] = useState("");
   const [textColor, setTextColor] = useState(initialColor);
 
