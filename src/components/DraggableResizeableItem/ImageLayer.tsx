@@ -6,18 +6,18 @@ interface ImageLayerProps {
   image: ImageElement;
   size: { width: number; height: number };
   handleDragStart: (e: React.MouseEvent<HTMLDivElement>) => void;
-  setIsVisible: (visible: boolean) => void;
+  onMakeItemActionsVisible: () => void;
 }
 
 export const ImageLayer = ({
   image,
   size,
   handleDragStart,
-  setIsVisible,
+  onMakeItemActionsVisible,
 }: ImageLayerProps) => {
   return (
     <div
-      onClick={() => setIsVisible(true)}
+      onClick={onMakeItemActionsVisible}
       onMouseDown={handleDragStart}
       className="relative cursor-move bg-transparent"
       style={{

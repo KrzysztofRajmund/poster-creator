@@ -33,7 +33,7 @@ export const DraggableResizableItem = ({
     handleDragStart,
     handlePropagation,
     handleResize,
-    setIsVisible,
+    makeItemActionsVisible,
   } = useDraggableResizable({
     initPosition: INIT_POSITION,
     initSize: initialSize,
@@ -46,14 +46,21 @@ export const DraggableResizableItem = ({
         <ImageLayer
           image={image}
           size={size}
-          setIsVisible={setIsVisible}
+          onMakeItemActionsVisible={makeItemActionsVisible}
           handleDragStart={handleDragStart}
         />
       );
     }
 
     return <TextLayer isVisible={isVisible} ref={elementRef} />;
-  }, [elementRef, handleDragStart, image, isVisible, setIsVisible, size]);
+  }, [
+    elementRef,
+    handleDragStart,
+    image,
+    isVisible,
+    makeItemActionsVisible,
+    size,
+  ]);
 
   return (
     <div
@@ -69,7 +76,7 @@ export const DraggableResizableItem = ({
         height: size.height,
         zIndex: layerIndex,
       }}
-      onMouseDown={() => setIsVisible(true)}
+      onMouseDown={makeItemActionsVisible}
     >
       {/* Drag handle*/}
       <div

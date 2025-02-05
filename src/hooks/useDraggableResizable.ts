@@ -44,9 +44,12 @@ export default function useDraggableResizable({
     [elementRef],
   );
 
-  const handlePropagation = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-  };
+  const handlePropagation = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation(),
+    [],
+  );
+
+  const makeItemActionsVisible = useCallback(() => setIsVisible(true), []);
 
   const handleDrag = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -92,7 +95,7 @@ export default function useDraggableResizable({
       handlePropagation(e);
       handleDrag(e);
     },
-    [handleDrag, isVisible],
+    [handleDrag, handlePropagation, isVisible],
   );
 
   const handleImageResize = useCallback(
@@ -227,6 +230,7 @@ export default function useDraggableResizable({
     handleDragStart,
     handlePropagation,
     handleResize,
+    makeItemActionsVisible,
     setIsVisible,
   };
 }
